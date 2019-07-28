@@ -1,0 +1,49 @@
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/spa
+server-->browser: HTML-code
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/spa.js
+server-->browser: spa.js
+
+note over browser:
+browser starts executing js-code
+that requests JSON data from server 
+end note
+
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/data.json
+server-->browser: [{ content: "HTML is easy", date: "2019-05-23" }, ...]
+
+note over browser:
+browser executes the event handler
+that renders notes to display
+end note
+
+note over browser:
+Button on the form is clicked.
+end note
+
+note over browser:
+From spa.js, document.getElementById('notes_form')
+instructs code to fetch the form-element from page
+and register an event handler to handle the form 
+submit event (form.onsubmit = function(e))
+end note
+
+note over browser:
+Event handler calls method e.preventDefault() to
+prevent default handling of form submit, which is
+to send the data to server and HTTP 302
+end note
+
+note over browser:
+Event handler creates a new note, adds it to notes
+list with command notes.push(note), then rerender
+the note list on the page
+end note
+
+note over browser:
+Send the note to the server with sentToServer(note)
+end note
+
+browser->server: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+server-->browser: HTTP 201 status (resource successfully created)
