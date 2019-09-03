@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
-import axios from 'axios'
 
 const Notification = ({message}) => {
   const notiStyle = {
@@ -60,29 +59,6 @@ const PersonForm = (props) => {
   )
 }
 
-/*
-const Display = ({filter}) => {
-  const delPerson = x => {
-    if (window.confirm(`Delete ${x.name}?`)){
-      personService.del(x.id).catch(error => {
-        console.log('fail')
-      })
-    } 
-  }
-  return (
-    <>
-    {filter.map(x => {
-      return (
-        <div key={x.name}>
-        {x.name} {x.number} <button onClick={()=>delPerson(x)}>delete</button> <br/>
-        </div>
-      )
-    })}
-    </>
-  )
-}*/
-
-
 const App = () => {
   const [ persons, setPersons] = useState([]) 
   const [ newName, setNewName ] = useState('')
@@ -114,11 +90,12 @@ const App = () => {
       })}
     else if (persons.find(x => x.name===newName).number !== newNumber) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
-        const url = `http://localhost:3001/persons/${persons.find(x => x.name===newName).id}`
-        const targetPerson = persons.find(x=>x.id===persons.find(x => x.name===newName).id)
+        const targetID = (persons.find(x => x.name===newName).id)
+        const targetPerson = persons.find(x=>x.id===targetID)
         const changedPerson = {...targetPerson, number:newNumber}
-        axios.put(url, changedPerson).then(response => {
-          setPersons(persons.map(x=> x.id !== 7 ? x:response.data))
+        personService.amend(targetID, changedPerson).then(response => {
+          setPersons(persons.map(x=> x.id !== targetID ? x : response.data))
+          
         })
       }
     } else {
@@ -141,6 +118,7 @@ const App = () => {
     if (window.confirm(`Delete ${x.name}?`)){
       personService.del(x.id).catch(error => {
         setError(`Information of ${x.name} has already been removed from server`)
+        setTimeout(()=> {setError(null)},5000)
       })
     } 
   }
