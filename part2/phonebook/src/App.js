@@ -87,7 +87,13 @@ const App = () => {
         setMessage(`Added ${newName}`)
         setTimeout(()=> {setMessage(null)},5000)
         setPersons(persons.concat(addedPerson))
-      })}
+      })
+      .catch(error => {
+        console.log(error.response.data)
+        setError(`${error.response.data.error}`)
+        setTimeout(()=> {setMessage(null)},5000)
+      })
+    }
     else if (persons.find(x => x.name===newName).number !== newNumber) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
         const targetID = (persons.find(x => x.name===newName).id)
@@ -95,7 +101,6 @@ const App = () => {
         const changedPerson = {...targetPerson, number:newNumber}
         personService.amend(targetID, changedPerson).then(response => {
           setPersons(persons.map(x=> x.id !== targetID ? x : response.data))
-          
         })
       }
     } else {
